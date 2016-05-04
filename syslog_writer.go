@@ -1,3 +1,6 @@
+// +build !windows,!nacl,!plan9
+
+
 package log4go
 
 import (
