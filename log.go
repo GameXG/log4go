@@ -54,8 +54,6 @@ type Logger struct {
 	writers     []Writer
 	tunnel      chan *Record
 	level       int
-	lastTime    int64
-	lastTimeStr string
 	c           chan bool
 	layout      string
 }
@@ -147,15 +145,11 @@ func (l *Logger) deliverRecordToWriter(level int, format string, args ...interfa
 
 	// format time
 	now := time.Now()
-	if now.Unix() != l.lastTime {
-		l.lastTime = now.Unix()
-		l.lastTimeStr = now.Format(l.layout)
-	}
 
 	r := recordPool.Get().(*Record)
 	r.info = inf
 	r.code = code
-	r.time = l.lastTimeStr
+	r.time = now.Format(l.layout)
 	r.level = level
 
 	l.tunnel <- r
