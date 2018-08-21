@@ -124,6 +124,16 @@ func (l *Logger) Close() {
 	}
 }
 
+func (l *Logger) Flush() {
+	for _, w := range l.writers {
+		if f, ok := w.(Flusher); ok {
+			if err := f.Flush(); err != nil {
+				log.Println(err)
+			}
+		}
+	}
+}
+
 func (l *Logger) deliverRecordToWriter(level int, format string, args ...interface{}) {
 	var inf, code string
 
@@ -258,6 +268,10 @@ func Register(w Writer) {
 
 func Close() {
 	logger_default.Close()
+}
+
+func Flush() {
+	logger_default.Flush()
 }
 
 func init() {
